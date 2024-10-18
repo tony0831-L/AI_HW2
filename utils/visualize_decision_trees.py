@@ -1,16 +1,20 @@
+import os
+from typing import Any
+
+from matplotlib import pyplot as plt
 from sklearn.tree import export_graphviz
-from io import StringIO  # Python 3.x 中使用 io.StringIO
+from io import StringIO
+from xgboost import plot_tree
 import pydotplus
-from utils.state_manger import state_manger
 from PIL import Image as PILImage
 
 
-def visualize_decision_trees(state: state_manger, output_path: str):
+def visualize_decision_trees(model: Any, output_path: str, openPic: bool = False):
     # 初始化io
     dot_data = StringIO()
 
     # 處理視覺化資料
-    export_graphviz(state.decision_tree,
+    export_graphviz(model,
                     out_file=dot_data,
                     filled=True,
                     rounded=True,
@@ -25,5 +29,20 @@ def visualize_decision_trees(state: state_manger, output_path: str):
     graph.write_png(output_path)
 
     # 打開圖片
-    img = PILImage.open(output_path)
-    img.show()
+    if openPic:
+        img = PILImage.open(output_path)
+        img.show()
+
+
+def visualize_xgboost_decision_trees(model: Any, output_path: str, openPic: bool = False):
+    for i in range(model.n_estimators):
+        plt.figure(figsize=(20, 10))
+        plot_tree(model, num_trees=i, show_values=True)
+
+        # 寫入檔案
+        plt.savefig(output_path + "xgboost" + str(i) + ".png")
+        plt.close()
+
+    # 打開圖片
+    if openPic:
+        plt.show()

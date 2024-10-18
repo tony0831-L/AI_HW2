@@ -5,7 +5,7 @@ from utils.state_manger import state_manger
 
 def xgboost_builder(state: state_manger):
     # 建立xgboost分類器
-    xgboost_classifier = xgboost.XGBClassifier()
+    xgboost_classifier = xgboost.XGBClassifier(n_estimators=20)
     # 訓練xgboost分類器
     xgboost_classifier.fit(state.X_train, state.y_train)
     # 模型預測值
